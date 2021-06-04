@@ -10,6 +10,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Worker;
 use Symfony\Component\HttpFoundation\Request;
 
+use App\Entity\Article;
+use App\Entity\Tag;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 class MainController extends AbstractController
 {
     /**
@@ -39,7 +43,7 @@ class MainController extends AbstractController
     /**
      * @Route("/add_worker", name="add_worker", methods="POST")
      */
-    public function add_worker(Request $request): Response
+    public function add_worker(Request $request, ValidatorInterface $validator): Response
     {
         // dd($request->request->get('name'));
 
@@ -50,10 +54,19 @@ class MainController extends AbstractController
         $worker->setCountry($request->request->get('country'));
         $worker->setDescription($request->request->get('description'));
 
+        // validation
+        $errors = $validator->validate($worker);
+        if (count($errors) > 0) {
+            $errorsString = (string) $errors;
+            $this->addFlash('failed','Fill every fields');
+            return $this->redirect('/');
+//            return new Response($errorsString);
+        }
+
         $entityManager->persist($worker);
         $entityManager->flush();
 
-        
+        $this->addFlash('success', 'Record created successfully');
         return $this->redirect('/');
     }
 
@@ -104,6 +117,61 @@ class MainController extends AbstractController
         $entityManager->flush();
 
         return $this->redirect('/');
+    }
+
+    /**
+     * @Route("/test", name="test")
+     */
+    public function test()
+    {
+//        $entityManager = $this->getDoctrine()->getManager();
+//
+//        /** @var Article[] $articles */
+//        $articles = $this->getDoctrine()
+//            ->getRepository(Article::class)
+//            ->findAll();
+//
+//        $tags = $this->getDoctrine()
+//            ->getRepository(Tag::class)
+//            ->findAll();
+//
+//        $i = 0;
+//        foreach ($articles as $article) {
+//            $article->addTag($tags[$i]);
+//            $article->addTag($tags[$i + 2]);
+//            $i++;
+//            $entityManager->persist($article);
+//        }
+//
+//        $entityManager->flush();
+
+        /** @var Article $article */
+        $article = $this->getDoctrine()
+        ->getRepository(Article::class)
+        ->find(7);
+
+        /** @var Tag $tag */
+        $tag = $this->getDoctrine()
+            ->getRepository(Tag::class)
+            ->find(30);
+
+        dd($tag->getArticles()->toArray());
+
+        dd('Gook');
+    }
+
+    public function bla_test()
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $article = new Article();
+        $article->setTitle('A good article');
+        $article->setDescription('Blab bla bla');
+
+
+        $entityManager->persist($article);
+        $entityManager->flush();
+        dd('Working');
     }
 
 }

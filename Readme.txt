@@ -35,6 +35,11 @@ Install dependencies:
 
 	$ composer require symfony/orm-pack
 	$ composer require --dev symfony/maker-bundle
+	$ composer require gedmo/doctrine-extensions   --- for doctrine
+	$ composer require orm-fixtures 			   --- for fixtures (seeders)
+	$ composer require fzaninotto/faker			   --- for faker data
+	$ composer require symfony/validator doctrine/annotations
+
 
 Make controller:
 
@@ -74,9 +79,50 @@ Created src/Entity/Worker.php file.
 
 //========================================================================
 
-Event Listeners
-------------
+Relationship.
+-----------------
 
-Create listener:
+Many to Many.
+--------------
 
-	$ 
+Many atricles <---> Many tags
+
+Create entity:
+
+	$ .bin/console make:entity Tag
+		- name, string, 255
+		- slug, string, 255
+
+	$ ./bin/console make:entity Article
+		- title, string, 255
+		- description, string, 255
+
+Make fixtures (seeder):
+
+	$ ./bin/console make:fixture
+		- TagFixture
+
+	$ ./bin/console make:fixture
+		- AtricleFixture
+
+Run fixtures:
+
+	$ ./bin/console doctrine:fixtures:load
+
+Create relations many to many:
+
+	$ ./bin/console make:entity
+		- Article
+		> tags, relation, Tag
+		> ManyToMany
+		> yes
+		> atricles
+
+Create migration:
+
+	$ ./bin/conosole make:migration   --- it will create article_tag table (pivot table)
+
+Run migration:
+
+	$ ./bin/console doctrine:migrations:migrate
+

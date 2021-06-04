@@ -7,6 +7,17 @@
 
 	<h1>Symfony CRUD</h1>
 
+{#	{{ dump(app.flashes('failed')) }}#}
+
+	{% for message in app.flashes('failed') %}
+		<h3 style="color: red;">{{ message }}</h3>
+	{% endfor %}
+
+	{% for message in app.flashes('success') %}
+		<h3 style="color: green;">{{ message }}</h3>
+	{% endfor %}
+
+
 	<form action="{{ path('add_worker') }}" method="POST">
 		<br>
 		<label>Name</label>
@@ -53,7 +64,7 @@
 		</tbody>
 	</table>
 
-	
+
 
 </body>
 </html>

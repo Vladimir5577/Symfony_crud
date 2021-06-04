@@ -5,6 +5,11 @@ namespace App\Entity;
 use App\Repository\WorkerRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+// for validation
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+//use Symfony\Component\Validator\Constraints as Assert;  // for email or something
+
 /**
  * @ORM\Entity(repositoryClass=WorkerRepository::class)
  */
@@ -35,6 +40,14 @@ class Worker
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    // validation
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraint('name', new NotBlank());
+        $metadata->addPropertyConstraint('country', new NotBlank());
+        $metadata->addPropertyConstraint('description', new NotBlank());
     }
 
     public function getName(): ?string
